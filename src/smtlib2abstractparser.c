@@ -32,6 +32,10 @@
 #include <string.h>
 
 
+smtlib2_parser_interface * SMTLIB2_PARSER_INTERFACE(smtlib2_abstract_parser *p) {
+    return &(p->parent_);
+}
+
 void smtlib2_abstract_parser_init(smtlib2_abstract_parser *p,
                                   smtlib2_context ctx)
 {

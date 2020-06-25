@@ -34,7 +34,10 @@
 /* typedefs */
 typedef struct smtlib2_parser_interface smtlib2_parser_interface;
 
-#define SMTLIB2_PARSER_INTERFACE(p) ((smtlib2_parser_interface *)p)
+// let's replace this nasty pointer manipulation
+// #define SMTLIB2_PARSER_INTERFACE(p) ((smtlib2_parser_interface *)p)
+
+smtlib2_parser_interface * SMTLIB2_PARSER_INTERFACE(smtlib2_abstract_parser *p);
 
 /**
  * Interface for SMT-LIB v2 parsers
