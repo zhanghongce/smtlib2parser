@@ -25,24 +25,11 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include "smtparser/smtlib2utils.h"
-#include <stdlib.h>
-#include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
 
 
-char *smtlib2_strdup(const char *src)
-{
-    size_t n = strlen(src);
-    char *ret = (char *)malloc(n+1);
-    if (ret) {
-        strcpy(ret, src);
-    }
-    return ret;
-}
-
-
-char *smtlib2_vsprintf(const char *fmt, va_list args)
+std::string smtlib2_vsprintf(const char *fmt, va_list args)
 {
     size_t size = 256;
     char *ret = (char *)malloc(size);
@@ -57,14 +44,16 @@ char *smtlib2_vsprintf(const char *fmt, va_list args)
         }
         ret = (char *)realloc(ret, size);
     }
-    return ret;
+    std::string ret_str = ret;
+    free(ret);
+    return ret_str;
 }
 
 
-char *smtlib2_sprintf(const char *fmt, ...)
+std::string smtlib2_sprintf(const char *fmt, ...)
 {
     va_list args;
-    char *ret;
+    std::string ret;
     va_start(args, fmt);
     ret = smtlib2_vsprintf(fmt, args);
     va_end(args);

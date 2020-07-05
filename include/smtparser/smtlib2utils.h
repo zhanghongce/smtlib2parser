@@ -27,10 +27,10 @@
 #ifndef SMTLIB2UTILS_H_INCLUDED
 #define SMTLIB2UTILS_H_INCLUDED
 
+#include <string>
 #include <stdarg.h>
 
-char *smtlib2_strdup(const char *src);
-char *smtlib2_sprintf(const char *fmt, ...);
-char *smtlib2_vsprintf(const char *fmt, va_list args);
+std::string smtlib2_sprintf(const char *fmt, ...);
+std::string smtlib2_vsprintf(const char *fmt, va_list args);
 
 #endif /* SMTLIB2UTILS_H_INCLUDED */

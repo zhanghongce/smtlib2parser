@@ -155,7 +155,7 @@ void  smtlib2_term_parser::smtlib2_term_parser_define_let_binding(
         auto pos = bindings_.find(symbol);
         if (pos != bindings_.end()) {
             errmsg_ = smtlib2_term_parser_format_error("symbol `%s' already defined",
-                                             symbol);
+                                             symbol.c_str());
         } else {
             int i;
             for (i = let_levels_.size() -1 ; i >= 0 ; --i) {
@@ -164,7 +164,7 @@ void  smtlib2_term_parser::smtlib2_term_parser_define_let_binding(
                     break;
                 if (s2 == symbol) {
                     errmsg_ = smtlib2_term_parser_format_error(
-                        "symbol `%s' already defined", symbol);
+                        "symbol `%s' already defined", symbol.c_str());
                     return;
                 }
             } // end for
