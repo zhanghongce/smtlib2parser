@@ -1,5 +1,10 @@
-/* -*- C -*-
+/* -*- C++ -*-
  *
+ * Adapted to C++ by Hongce Zhang (hongcez@princeton.edu)
+ * ------------------------------------------------
+ *           Original Header Below
+ * ------------------------------------------------
+ * 
  * A (abstract) lexical scanner for the SMT-LIB v2 language
  *
  * Author: Alberto Griggio <griggio@fbk.eu>

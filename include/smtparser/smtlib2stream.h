@@ -29,7 +29,6 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-#include "smtparser/smtlib2charbuf.h"
 
 typedef struct smtlib2_stream smtlib2_stream;
 

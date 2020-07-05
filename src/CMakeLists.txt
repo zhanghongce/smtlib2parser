@@ -70,14 +70,11 @@ SET_SOURCE_FILES_PROPERTIES(${BINARY_DIR}/${BISON_OUTPUT} ${BINARY_DIR}/${BISON_
 
 set(PARSER_LIB_SRC ${BINARY_DIR}/${FLEX_OUTPUT}
                    ${BINARY_DIR}/${BISON_OUTPUT}
-                   ${SOURCE_DIR}/smtlib2hashtable.c
-                   ${SOURCE_DIR}/smtlib2abstractparser.c
-                   ${SOURCE_DIR}/smtlib2termparser.c
-                   ${SOURCE_DIR}/smtlib2utils.c
-                   ${SOURCE_DIR}/smtlib2vector.c
-                   ${SOURCE_DIR}/smtlib2charbuf.c
-                   ${SOURCE_DIR}/smtlib2stream.c
-                   ${SOURCE_DIR}/smtlib2scanner.c
+                   ${SOURCE_DIR}/smtlib2abstractparser.cpp
+                   ${SOURCE_DIR}/smtlib2termparser.cpp
+                   ${SOURCE_DIR}/smtlib2utils.cpp
+                   ${SOURCE_DIR}/smtlib2stream.cpp
+                   ${SOURCE_DIR}/smtlib2scanner.cpp
 )
 
 add_library(${LIBRARY_NAME} ${PARSER_LIB_SRC})

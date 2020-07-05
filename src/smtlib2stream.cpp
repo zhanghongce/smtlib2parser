@@ -1,5 +1,10 @@
-/* -*- C -*-
+/* -*- C++ -*-
  *
+ * Adapted to C++ by Hongce Zhang (hongcez@princeton.edu)
+ * ------------------------------------------------
+ *           Original Header Below
+ * ------------------------------------------------
+ * 
  * Interfaces for abstract character-based I/O streams
  *
  * Author: Alberto Griggio <griggio@fbk.eu>

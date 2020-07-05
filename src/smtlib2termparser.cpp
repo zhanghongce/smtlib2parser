@@ -1,5 +1,10 @@
-/* -*- C -*-
+/* -*- C++ -*-
  *
+ * Adapted to C++ by Hongce Zhang (hongcez@princeton.edu)
+ * ------------------------------------------------
+ *           Original Header Below
+ * ------------------------------------------------
+ * 
  * Parser for Terms in the SMT-LIB v2 format
  *
  * Author: Alberto Griggio <griggio@fbk.eu>

@@ -1,5 +1,11 @@
 /* -*- fundamental -*-                                                        
- *                                                                            
+ *
+ *
+ * Adapted to C++ by Hongce Zhang (hongcez@princeton.edu)
+ * ------------------------------------------------
+ *           Original Header Below
+ * ------------------------------------------------
+ *                                                    
  * Flex-based lexical scanner for the SMT-LIB v2 command language
  *                                                                            
  * Author: Alberto Griggio <griggio@fbk.eu>

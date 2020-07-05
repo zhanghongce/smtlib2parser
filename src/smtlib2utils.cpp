@@ -1,6 +1,11 @@
-/* -*- C -*-
+/* -*- C++ -*-
  *
- * Resizable arrays for the SMT-LIB v2 parser
+ * Adapted to C++ by Hongce Zhang (hongcez@princeton.edu)
+ * ------------------------------------------------
+ *           Original Header Below
+ * ------------------------------------------------
+ * 
+ * Utility functions and data structures for the SMT-LIB v2 parser
  *
  * Author: Alberto Griggio <griggio@fbk.eu>
  *
@@ -24,17 +29,38 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SMTLIB2VECTOR_H_INCLUDED
-#define SMTLIB2VECTOR_H_INCLUDED
+#include "smtparser/smtlib2utils.h"
+#include <stdio.h>
+#include <stdarg.h>
 
-#include "smtparser/smtlib2genvector.h"
 
-SMTLIB2_DECLARE_VECTOR(smtlib2_vector, intptr_t)
+std::string smtlib2_vsprintf(const char *fmt, va_list args)
+{
+    size_t size = 256;
+    char *ret = (char *)malloc(size);
+    while (ret) {
+        int res = vsnprintf(ret, size, fmt, args);
+        if (res > -1 && res < size) {
+            break;
+        } else if (res > -1) {
+            size = res+1;
+        } else {
+            size *= 2;
+        }
+        ret = (char *)realloc(ret, size);
+    }
+    std::string ret_str = ret;
+    free(ret);
+    return ret_str;
+}
 
-#define smtlib2_vector_size(v) SMTLIB2_VECTOR_SIZE(v)
-#define smtlib2_vector_capacity(v) SMTLIB2_VECTOR_CAPACITY(v)
-#define smtlib2_vector_at(v, i) (SMTLIB2_VECTOR_ARRAY(v)[(i)])
-#define smtlib2_vector_last(v) smtlib2_vector_at(v, SMTLIB2_VECTOR_SIZE(v)-1)
-#define smtlib2_vector_array(v) SMTLIB2_VECTOR_ARRAY(v)
 
-#endif /* SMTLIB2VECTOR_H_INCLUDED */
+std::string smtlib2_sprintf(const char *fmt, ...)
+{
+    va_list args;
+    std::string ret;
+    va_start(args, fmt);
+    ret = smtlib2_vsprintf(fmt, args);
+    va_end(args);
+    return ret;
+}

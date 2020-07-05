@@ -1,5 +1,10 @@
-/* -*- C -*-
+/* -*- C++ -*-
  *
+ * Adapted to C++ by Hongce Zhang (hongcez@princeton.edu)
+ * ------------------------------------------------
+ *           Original Header Below
+ * ------------------------------------------------
+ * 
  * Abstract types for the SMT-LIB v2 parser
  *
  * Author: Alberto Griggio <griggio@fbk.eu>
