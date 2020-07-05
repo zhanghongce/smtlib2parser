@@ -30,6 +30,10 @@
 #include "smtparser/smtlib2abstractparser.h"
 #include "smtparser/smtlib2scanner.h"
 
+#include <vector>
+#include <string>
+#include <unordered_map>
+
 typedef enum {
     SMTLIB2_RESPONSE_SUCCESS,
     SMTLIB2_RESPONSE_ERROR,
@@ -51,9 +55,8 @@ typedef enum {
 /**
  * An abstract SMT-LIB 2 parser, providing functionalities for parsing terms
  */
-struct smtlib2_abstract_parser {
-    smtlib2_parser_interface parent_;
-    smtlib2_term_parser *termparser_;
+struct smtlib2_abstract_parser : smtlib2_parser_interface {
+    smtlib2_term_parser termparser_;
 
     FILE *outstream_;
     FILE *errstream_;
@@ -61,116 +64,121 @@ struct smtlib2_abstract_parser {
     smtlib2_response response_;
     bool print_success_;
 
-    char *errmsg_;
-    smtlib2_vector *response_data_;
+    std::string errmsg_;
+    std::vector<std::string> response_data_;
 
     smtlib2_status status_;
 
     bool set_logic_ok_;
     bool exiting_;
 
-    smtlib2_hashtable *info_;
+    std::unordered_map<std::string, std::string> info_;
 
-    smtlib2_vector *internal_parsed_terms_;
+    std::vector<smtlib2_term> internal_parsed_terms_;
     bool internal_parsed_terms_enabled_;
 
-    smtlib2_scanner *scanner_;
+    smtlib2_scanner scanner_;
+
+    // constructor & destructor
+    smtlib2_abstract_parser(smtlib2_context c);
+    ~smtlib2_abstract_parser();
+    // member functions
 };
 
 
-void smtlib2_abstract_parser_set_logic(smtlib2_parser_interface *p,
-                                       const char *logic);
-void smtlib2_abstract_parser_declare_sort(smtlib2_parser_interface *p,
-                                          const char *sortname,
+void smtlib2_abstract_parser_set_logic(smtlib2_parser_interface & p,
+                                       const std::string & logic);
+void smtlib2_abstract_parser_declare_sort(smtlib2_parser_interface & p,
+                                          const std::string & sortname,
                                           int arity);
-void smtlib2_abstract_parser_define_sort(smtlib2_parser_interface *p,
-                                         const char *sortname,
-                                         smtlib2_vector *params,
+void smtlib2_abstract_parser_define_sort(smtlib2_parser_interface & p,
+                                         const std::string & sortname,
+                                         const sort_vec & params,
                                          smtlib2_sort sort);
-void smtlib2_abstract_parser_push_sort_param_scope(smtlib2_parser_interface *p);
-void smtlib2_abstract_parser_pop_sort_param_scope(smtlib2_parser_interface *p);
+void smtlib2_abstract_parser_push_sort_param_scope(smtlib2_parser_interface & p);
+void smtlib2_abstract_parser_pop_sort_param_scope(smtlib2_parser_interface & p);
                                                    
-void smtlib2_abstract_parser_declare_function(smtlib2_parser_interface *p,
-                                              const char *name,
+void smtlib2_abstract_parser_declare_function(smtlib2_parser_interface & p,
+                                              const std::string & name,
                                               smtlib2_sort sort);
-void smtlib2_abstract_parser_declare_variable(smtlib2_parser_interface *p,
-                                              const char *name,
+void smtlib2_abstract_parser_declare_variable(smtlib2_parser_interface & p,
+                                              const std::string & name,
                                               smtlib2_sort sort);
-void smtlib2_abstract_parser_define_function(smtlib2_parser_interface *p,
-                                             const char *name,
-                                             smtlib2_vector *params,
+void smtlib2_abstract_parser_define_function(smtlib2_parser_interface & p,
+                                             const std::string & name,
+                                             const term_vec & params,
                                              smtlib2_sort sort,
                                              smtlib2_term term);
-void smtlib2_abstract_parser_push(smtlib2_parser_interface *p, int n);
-void smtlib2_abstract_parser_pop(smtlib2_parser_interface *p, int n);
-void smtlib2_abstract_parser_assert_formula(smtlib2_parser_interface *p,
+void smtlib2_abstract_parser_push(smtlib2_parser_interface & p, int n);
+void smtlib2_abstract_parser_pop(smtlib2_parser_interface & p, int n);
+void smtlib2_abstract_parser_assert_formula(smtlib2_parser_interface & p,
                                             smtlib2_term term);
-void smtlib2_abstract_parser_check_sat(smtlib2_parser_interface *p);
-void smtlib2_abstract_parser_get_unsat_core(smtlib2_parser_interface *p);
-void smtlib2_abstract_parser_get_proof(smtlib2_parser_interface *p);
+void smtlib2_abstract_parser_check_sat(smtlib2_parser_interface & p);
+void smtlib2_abstract_parser_get_unsat_core(smtlib2_parser_interface & p);
+void smtlib2_abstract_parser_get_proof(smtlib2_parser_interface & p);
 
-void smtlib2_abstract_parser_set_str_option(smtlib2_parser_interface *p,
-                                            const char *keyword,
-                                            const char *value);
-void smtlib2_abstract_parser_set_int_option(smtlib2_parser_interface *p,
-                                            const char *keyword,
+void smtlib2_abstract_parser_set_str_option(smtlib2_parser_interface & p,
+                                            const std::string & keyword,
+                                            const std::string & value);
+void smtlib2_abstract_parser_set_int_option(smtlib2_parser_interface & p,
+                                            const std::string & keyword,
                                             int value);
-void smtlib2_abstract_parser_set_rat_option(smtlib2_parser_interface *p,
-                                            const char *keyword,
+void smtlib2_abstract_parser_set_rat_option(smtlib2_parser_interface & p,
+                                            const std::string & keyword,
                                             double value);
-void smtlib2_abstract_parser_get_info(smtlib2_parser_interface *p,
-                                      const char *keyword);
-void smtlib2_abstract_parser_set_info(smtlib2_parser_interface *p,
-                                      const char *keyword,
-                                      const char *value);
-void smtlib2_abstract_parser_get_assignment(smtlib2_parser_interface *p);
-void smtlib2_abstract_parser_get_value(smtlib2_parser_interface *p,
-                                       smtlib2_vector *terms);
-void smtlib2_abstract_parser_exit(smtlib2_parser_interface *p);
+void smtlib2_abstract_parser_get_info(smtlib2_parser_interface & p,
+                                      const std::string & keyword);
+void smtlib2_abstract_parser_set_info(smtlib2_parser_interface & p,
+                                      const std::string & keyword,
+                                      const std::string & value);
+void smtlib2_abstract_parser_get_assignment(smtlib2_parser_interface & p);
+void smtlib2_abstract_parser_get_value(smtlib2_parser_interface & p,
+                                       const std::vector<std::string> & terms);
+void smtlib2_abstract_parser_exit(smtlib2_parser_interface & p);
 
 void smtlib2_abstract_parser_set_internal_parsed_terms(
-                                                    smtlib2_parser_interface *p,
-                                                    smtlib2_vector *terms);
+                                                    smtlib2_parser_interface & p,
+                                                    const term_vec & terms);
 
-void smtlib2_abstract_parser_handle_error(smtlib2_parser_interface *p,
-                                          const char *msg);
+void smtlib2_abstract_parser_handle_error(smtlib2_parser_interface & p,
+                                          const std::string & msg);
 
-void smtlib2_abstract_parser_push_let_scope(smtlib2_parser_interface *p);
-smtlib2_term smtlib2_abstract_parser_pop_let_scope(smtlib2_parser_interface *p);
+void smtlib2_abstract_parser_push_let_scope(smtlib2_parser_interface & p);
+smtlib2_term smtlib2_abstract_parser_pop_let_scope(smtlib2_parser_interface & p);
 
-void smtlib2_abstract_parser_push_quantifier_scope(smtlib2_parser_interface *p);
-smtlib2_term smtlib2_abstract_parser_pop_quantifier_scope(smtlib2_parser_interface *p);
+void smtlib2_abstract_parser_push_quantifier_scope(smtlib2_parser_interface & p);
+smtlib2_term smtlib2_abstract_parser_pop_quantifier_scope(smtlib2_parser_interface & p);
 
-smtlib2_term smtlib2_abstract_parser_make_term(smtlib2_parser_interface *p,
-                                               const char *symbol,
+smtlib2_term smtlib2_abstract_parser_make_term(smtlib2_parser_interface & p,
+                                               const std::string & symbol,
                                                smtlib2_sort sort,
-                                               smtlib2_vector *index,
-                                               smtlib2_vector *args);
+                                               <????> *index,
+                                               <????> *args);
 smtlib2_term smtlib2_abstract_parser_make_number_term(
-                                                    smtlib2_parser_interface *p,
-                                                    const char *numval,
+                                                    smtlib2_parser_interface & p,
+                                                    const std::string & numval,
                                                     int width,
                                                     int base);
 
-void smtlib2_abstract_parser_annotate_term(smtlib2_parser_interface *p,
+void smtlib2_abstract_parser_annotate_term(smtlib2_parser_interface & p,
                                            smtlib2_term term,
-                                           smtlib2_vector *annotations);
+                                           <????> *annotations);
 
-void smtlib2_abstract_parser_define_let_binding(smtlib2_parser_interface *p,
-                                                const char *symbol,
+void smtlib2_abstract_parser_define_let_binding(smtlib2_parser_interface & p,
+                                                const std::string & symbol,
                                                 smtlib2_term term);
-smtlib2_sort smtlib2_abstract_parser_make_sort(smtlib2_parser_interface *p,
-                                               const char *sortname,
-                                               smtlib2_vector *index);
+smtlib2_sort smtlib2_abstract_parser_make_sort(smtlib2_parser_interface & p,
+                                               const std::string & sortname,
+                                               <????> *index);
 smtlib2_sort smtlib2_abstract_parser_make_parametric_sort(
-                                                    smtlib2_parser_interface *p,
-                                                    const char *name,
-                                                    smtlib2_vector *tps);
+                                                    smtlib2_parser_interface & p,
+                                                    const std::string & name,
+                                                    <????> *tps);
 smtlib2_sort smtlib2_abstract_parser_make_function_sort(
-                                                    smtlib2_parser_interface *p,
-                                                    smtlib2_vector *tps);
+                                                    smtlib2_parser_interface & p,
+                                                    <????> *tps);
 
-void smtlib2_abstract_parser_print_response(smtlib2_abstract_parser *p);
-void smtlib2_abstract_parser_reset_response(smtlib2_abstract_parser *p);
+void smtlib2_abstract_parser_print_response(smtlib2_abstract_parser & p);
+void smtlib2_abstract_parser_reset_response(smtlib2_abstract_parser & p);
 
 #endif /* SMTLIB2ABSTRACTPARSER_PRIVATE_H_INCLUDED */

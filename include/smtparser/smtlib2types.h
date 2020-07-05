@@ -27,8 +27,14 @@
 #ifndef SMTLIB2TYPES_H_INCLUDED
 #define SMTLIB2TYPES_H_INCLUDED
 
+#include <vector>
+
 typedef void *smtlib2_term;
 typedef void *smtlib2_sort;
 typedef void *smtlib2_context;
+
+typedef std::vector<smtlib2_term> term_vec;
+typedef std::vector<smtlib2_sort> sort_vec;
+typedef std::vector<int> int_vec;
 
 #endif /* SMTLIB2TYPES_H_INCLUDED */

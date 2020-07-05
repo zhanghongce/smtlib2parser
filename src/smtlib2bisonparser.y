@@ -51,18 +51,17 @@ void smtlib2_parser_error(YYLTYPE *yylloc, yyscan_t scanner,
  * indexed identifiers, without supporting such things in the core solver
  */
 typedef struct smtlib2_indexed_identifier {
-    char *name;
-    smtlib2_vector *idx;
+    std::string name;
+    int_vec idx;
     smtlib2_sort tp;
 } smtlib2_indexed_identifier;
 
 smtlib2_indexed_identifier *smtlib2_indexed_identifier_new(
-    const char *n, smtlib2_vector *i, smtlib2_sort t);
-void smtlib2_indexed_identifier_delete(smtlib2_indexed_identifier *i);
+    const std::string & n, const int_vec & i, smtlib2_sort t);
 
 smtlib2_term smtlib2_make_term_from_identifier(
-    smtlib2_parser_interface *parser,
-    smtlib2_indexed_identifier *ident, smtlib2_vector *args);
+    smtlib2_parser_interface & parser,
+    smtlib2_indexed_identifier & ident, smtlib2_vector *args);
 
 %}
 

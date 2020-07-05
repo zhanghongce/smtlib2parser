@@ -35,71 +35,87 @@
 typedef struct smtlib2_term_parser smtlib2_term_parser;
 
 typedef smtlib2_term (*smtlib2_term_parser_symbolhandler)(smtlib2_context ctx,
-                                                          const char *symbol,
+                                                          const std::string & symbol,
                                                           smtlib2_sort sort,
-                                                          smtlib2_vector *idx,
-                                                          smtlib2_vector *args);
+                                                          const int_vec & idx,
+                                                          const term_vec & args);
 
 typedef smtlib2_term (*smtlib2_term_parser_numberhandler)(smtlib2_context ctx,
-                                                          const char *rep,
+                                                          const std::string & rep,
                                                           unsigned int width,
                                                           unsigned int base);
 typedef smtlib2_term (*smtlib2_term_parser_functionhandler)(
                                                           smtlib2_context ctx,
-                                                          const char *symbol,
+                                                          const std::string & symbol,
                                                           smtlib2_sort sort,
-                                                          smtlib2_vector *index,
-                                                          smtlib2_vector *args);
+                                                          const int_vec & index,
+                                                          const term_vec & args);
 
 struct smtlib2_term_parser {
     smtlib2_context ctx_;
-    smtlib2_hashtable *symbol_handlers_;
+    std::unordered_map<std::string, smtlib2_term_parser_symbolhandler> symbol_handlers_;
+    // smtlib2_hashtable *symbol_handlers_;
+
     smtlib2_term_parser_functionhandler function_term_handler_;
     smtlib2_term_parser_numberhandler number_term_handler_;
-    smtlib2_hashtable *let_bindings_;
-    smtlib2_vector *let_levels_;
-    smtlib2_hashtable *bindings_;
-    smtlib2_hashtable *term_params_;
-    char *errmsg_;
+
+    std::unordered_map<std::string, std::vector<smtlib2_term>> let_bindings_;
+    //smtlib2_hashtable *let_bindings_;
+    std::vector<std::string> let_levels_;
+    //vec let_levels_;
+
+    std::unordered_map<std::string, smtlib2_term> bindings_;
+    //smtlib2_hashtable *bindings_;
+    
+    std::unordered_map<std::string, int_vec> term_params_;
+    //smtlib2_hashtable *term_params_;
+    std::string errmsg_;
+
+    smtlib2_term_parser(smtlib2_context ctx);
+
+    smtlib2_term smtlib2_term_parser_make_term(
+                                            const std::string & symbol,
+                                            smtlib2_sort sort,
+                                            const int_vec & index,
+                                            const term_vec & args);
+    smtlib2_term smtlib2_term_parser_make_number_term(
+                                                    const std::string & rep,
+                                                    unsigned int width,
+                                                    unsigned int base);
+
+    void smtlib2_term_parser_push_let_scope();
+    void smtlib2_term_parser_pop_let_scope();
+    void smtlib2_term_parser_define_let_binding(
+                                                const std::string & symbol,
+                                                smtlib2_term term);
+    void smtlib2_term_parser_define_binding(
+                                            const std::string & symbol,
+                                            const int_vec & params,
+                                            smtlib2_term term);
+    void smtlib2_term_parser_undefine_binding(
+                                            const std::string & symbol);
+
+    void smtlib2_term_parser_set_handler(
+                                        const std::string & symbol,
+                                        smtlib2_term_parser_symbolhandler handler);
+    void smtlib2_term_parser_set_function_handler(
+        
+        smtlib2_term_parser_functionhandler handler);
+    void smtlib2_term_parser_set_number_handler(
+        
+        smtlib2_term_parser_numberhandler handler);
+
+    bool smtlib2_term_parser_error() const;
+    std::string smtlib2_term_parser_get_error_msg() const;
+
+private:
+    smtlib2_term smtlib2_term_parser_get_binding(const std::string & symbol) const;
+    const int_vec & smtlib2_term_parser_get_params(smtlib2_term term) const;
+private:
+    int_vec empty_inv_vec;
 };
 
 
-smtlib2_term_parser *smtlib2_term_parser_new(smtlib2_context ctx);
-void smtlib2_term_parser_delete(smtlib2_term_parser *tp);
 
-smtlib2_term smtlib2_term_parser_make_term(smtlib2_term_parser *tp,
-                                           const char *symbol,
-                                           smtlib2_sort sort,
-                                           smtlib2_vector *index,
-                                           smtlib2_vector *args);
-smtlib2_term smtlib2_term_parser_make_number_term(smtlib2_term_parser *tp,
-                                                  const char *rep,
-                                                  unsigned int width,
-                                                  unsigned int base);
-
-void smtlib2_term_parser_push_let_scope(smtlib2_term_parser *tp);
-void smtlib2_term_parser_pop_let_scope(smtlib2_term_parser *tp);
-void smtlib2_term_parser_define_let_binding(smtlib2_term_parser *tp,
-                                            const char *symbol,
-                                            smtlib2_term term);
-void smtlib2_term_parser_define_binding(smtlib2_term_parser *tp,
-                                        const char *symbol,
-                                        smtlib2_vector *params,
-                                        smtlib2_term term);
-void smtlib2_term_parser_undefine_binding(smtlib2_term_parser *tp,
-                                          const char *symbol);
-
-void smtlib2_term_parser_set_handler(smtlib2_term_parser *tp,
-                                     const char *symbol,
-                                     smtlib2_term_parser_symbolhandler handler);
-void smtlib2_term_parser_set_function_handler(
-    smtlib2_term_parser *tp,
-    smtlib2_term_parser_functionhandler handler);
-void smtlib2_term_parser_set_number_handler(
-    smtlib2_term_parser *tp,
-    smtlib2_term_parser_numberhandler handler);
-
-bool smtlib2_term_parser_error(smtlib2_term_parser *tp);
-const char *smtlib2_term_parser_get_error_msg(smtlib2_term_parser *tp);
 
 #endif /* SMTLIBTERMPARSER_H_INCLUDED */

@@ -30,6 +30,10 @@
 #include "smtparser/smtlib2types.h"
 #include "smtparser/smtlib2utils.h"
 
+#include <vector>
+#include <string>
+#include <unordered_map>
+#include <map>
 
 /* typedefs */
 typedef struct smtlib2_parser_interface smtlib2_parser_interface;
@@ -44,13 +48,13 @@ struct smtlib2_parser_interface {
     /**
      * callback for a "set-logic" command
      */
-    void (*set_logic)(smtlib2_parser_interface *parser, const char *logic);
+    void (*set_logic)(smtlib2_parser_interface & parser, const std::string & logic);
 
     /**
      * callback for a "declare-sort" command
      */
-    void (*declare_sort)(smtlib2_parser_interface *parser,
-                         const char *sortname, int arity);
+    void (*declare_sort)(smtlib2_parser_interface & parser,
+                         const std::string & sortname, int arity);
 
     /**
      * callback for a "define-sort" command
@@ -59,23 +63,23 @@ struct smtlib2_parser_interface {
      * "sort" is the "template" sort when parameters are used,
      *        otherwise it is a concrete sort
      */
-    void (*define_sort)(smtlib2_parser_interface *parser,
-                        const char *sortname, smtlib2_vector *params,
+    void (*define_sort)(smtlib2_parser_interface & parser,
+                        const std::string & sortname, const sort_vec & params,
                         smtlib2_sort sort);
 
     /**
      * callback for a "declare-function" command
      */
-    void (*declare_function)(smtlib2_parser_interface *parser,
-                             const char *name, smtlib2_sort sort);
+    void (*declare_function)(smtlib2_parser_interface & parser,
+                              const std::string & name, smtlib2_sort sort);
 
     /**
      * callback for declaring a quantified variable
      * This gets called for variables declared by an "exists" or "forall"
      * quantification, but also for parameters of a "define-function" command
      */
-    void (*declare_variable)(smtlib2_parser_interface *parser,
-                             const char *name, smtlib2_sort sort);
+    void (*declare_variable)(smtlib2_parser_interface & parser,
+                              const std::string & name, smtlib2_sort sort);
 
     /**
      * callback for a "define-function" command
@@ -87,81 +91,81 @@ struct smtlib2_parser_interface {
      * "term" is the term "template" term when parameters are used,
      *        or the actual definition when no parameters are given
      */
-    void (*define_function)(smtlib2_parser_interface *parser,
-                            const char *name,
-                            smtlib2_vector *params,
+    void (*define_function)(smtlib2_parser_interface & parser,
+                            const std::string & name,
+                            const term_vec & params,
                             smtlib2_sort sort, smtlib2_term term);
 
     /**
      * callback for a "push" command
      */
-    void (*push)(smtlib2_parser_interface *parser, int n);
+    void (*push)(smtlib2_parser_interface & parser, int n);
 
     /**
      * callback for a "pop" command
      */
-    void (*pop)(smtlib2_parser_interface *parser, int n);
+    void (*pop)(smtlib2_parser_interface & parser, int n);
 
     /**
      * callback for an "assert" command
      */
-    void (*assert_formula)(smtlib2_parser_interface *parser, smtlib2_term term);
+    void (*assert_formula)(smtlib2_parser_interface & parser, smtlib2_term term);
 
     /**
      * callback for a "check-sat" command
      */
-    void (*check_sat)(smtlib2_parser_interface *parser);
+    void (*check_sat)(smtlib2_parser_interface & parser);
 
     /**
      * callback for a "get-assignment" command
      */
-    void (*get_assignment)(smtlib2_parser_interface *parser);
+    void (*get_assignment)(smtlib2_parser_interface & parser);
 
     /**
      * callback for a "get-assertions" command
      */
-    void (*get_assertions)(smtlib2_parser_interface *parser);
+    void (*get_assertions)(smtlib2_parser_interface & parser);
 
     /**
      * callback for a "get-unsat-core" command
      */
-    void (*get_unsat_core)(smtlib2_parser_interface *parser);
+    void (*get_unsat_core)(smtlib2_parser_interface & parser);
 
     /**
      * callback for a "get-proof" command
      */
-    void (*get_proof)(smtlib2_parser_interface *parser);
+    void (*get_proof)(smtlib2_parser_interface & parser);
 
     /**
      * callback for a "set-option" command with string value
      */
-    void (*set_str_option)(smtlib2_parser_interface *parser,
-                           const char *keyword, const char *value);
+    void (*set_str_option)(smtlib2_parser_interface & parser,
+                           const std::string & keyword, const std::string & value);
 
     /**
      * callback for a "set-option" command with integer value
      * also options with true/false values will trigger this callback
      */
-    void (*set_int_option)(smtlib2_parser_interface *parser,
-                           const char *keyword, int value);
+    void (*set_int_option)(smtlib2_parser_interface & parser,
+                           const std::string & keyword, int value);
 
     /**
      * callback for a "set-option" command with a rational value (e.g. timeout)
      */
-    void (*set_rat_option)(smtlib2_parser_interface *parser,
-                           const char *keyword, double value);
+    void (*set_rat_option)(smtlib2_parser_interface & parser,
+                           const std::string & keyword, double value);
 
     /**
      * callback for a "get-info" command
      */
-    void (*get_info)(smtlib2_parser_interface *parser,
-                     const char *keyword);
+    void (*get_info)(smtlib2_parser_interface & parser,
+                     const std::string & keyword);
 
     /**
      * callback for a "set-info" command
      */
-    void (*set_info)(smtlib2_parser_interface *parser,
-                     const char *keyword, const char *value);
+    void (*set_info)(smtlib2_parser_interface & parser,
+                     const std::string & keyword, const std::string & value);
 
     /**
      * callback for a "get-value" command
@@ -180,58 +184,58 @@ struct smtlib2_parser_interface {
      *         See smtlib2yices.c for an example of use of
      *         ".internal-parse-terms" from within a "get-value" callback
      */
-    void (*get_value)(smtlib2_parser_interface *parser, smtlib2_vector *terms);
+    void (*get_value)(smtlib2_parser_interface & parser, const std::vector<std::string> & terms);
 
     /**
      * callback for a "exit" command
      */
-    void (*exit)(smtlib2_parser_interface *parser);
+    void (*exit)(smtlib2_parser_interface & parser);
 
     /**
      * callback for handling parse errors
      */
-    void (*handle_error)(smtlib2_parser_interface *parser, const char *msg);
+    void (*handle_error)(smtlib2_parser_interface & parser, const std::string & msg);
 
     /**
      * callback for the ".internal-parse-terms" command (see above)
      */
-    void (*set_internal_parsed_terms)(smtlib2_parser_interface *parser,
-                                      smtlib2_vector *terms);
+    void (*set_internal_parsed_terms)(smtlib2_parser_interface & parser,
+                                      const term_vec & terms);
 
     /**
      * push a scope for let bindings. called every time a "let" is parsed
      */
-    void (*push_let_scope)(smtlib2_parser_interface *parser);
+    void (*push_let_scope)(smtlib2_parser_interface & parser);
 
     /**
      * pop a scope for let bindings. called every time the closing parenthesis
      * for a "let" is parsed
      */
-    smtlib2_term (*pop_let_scope)(smtlib2_parser_interface *parser);
+    smtlib2_term (*pop_let_scope)(smtlib2_parser_interface & parser);
 
     /**
      * push a scope for quantified variables. called every time an "exist" or
      * "forall" is parsed, and also when a "define-function" with parameters
      * is parsed
      */
-    void (*push_quantifier_scope)(smtlib2_parser_interface *parser);
+    void (*push_quantifier_scope)(smtlib2_parser_interface & parser);
 
     /**
      * pop a scope for quantified variabled. called when the closing
      * parenthesis for an "exists", "forall" or "define-function" is parsed
      */
-    smtlib2_term (*pop_quantifier_scope)(smtlib2_parser_interface *parser);
+    smtlib2_term (*pop_quantifier_scope)(smtlib2_parser_interface & parser);
 
     /**
      * push a scope for sort parameters. called when a "define-sort" is parsed
      */
-    void (*push_sort_param_scope)(smtlib2_parser_interface *parser);
+    void (*push_sort_param_scope)(smtlib2_parser_interface & parser);
 
     /**
      * pop a scope for sort parameters. called when the closing parenthesis
      * for a "define-sort" is parsed
      */
-    void (*pop_sort_param_scope)(smtlib2_parser_interface *parser);
+    void (*pop_sort_param_scope)(smtlib2_parser_interface & parser);
 
     /**
      * callback for creating terms
@@ -248,10 +252,10 @@ struct smtlib2_parser_interface {
      * "args" is the vector of arguments for this term
      *        (a vector of smtlib2_term)         
      */
-    smtlib2_term (*make_term)(smtlib2_parser_interface *parser,
-                              const char *symbol, smtlib2_sort sort,
-                              smtlib2_vector *index,
-                              smtlib2_vector *args);
+    smtlib2_term (*make_term)(smtlib2_parser_interface & parser,
+                              const std::string & symbol, smtlib2_sort sort,
+                              const int_vec & index,
+                              const term_vec & args);
 
     /**
      * callback for creating numbers
@@ -264,19 +268,19 @@ struct smtlib2_parser_interface {
      * "base" is the base used for the representation "numval".
      *        can be 2, 10 or 16
      */
-    smtlib2_term (*make_number_term)(smtlib2_parser_interface *parser,
-                                     const char *numval, int width, int base);
+    smtlib2_term (*make_number_term)(smtlib2_parser_interface & parser,
+                                     const std::string & numval, int width, int base);
 
     /**
      * callback for creating universally-quantified terms
      */
-    smtlib2_term (*make_forall_term)(smtlib2_parser_interface *parser,
+    smtlib2_term (*make_forall_term)(smtlib2_parser_interface & parser,
                                      smtlib2_term term);
 
     /**
      * callback for creating existentially-quantified terms
      */
-    smtlib2_term (*make_exists_term)(smtlib2_parser_interface *parser,
+    smtlib2_term (*make_exists_term)(smtlib2_parser_interface & parser,
                                      smtlib2_term term);
 
     /**
@@ -291,16 +295,16 @@ struct smtlib2_parser_interface {
      *          "annotate_term" with "term" set to "x" and annotations to
      *          { { ":named", "pippo" } }
      */
-    void (*annotate_term)(smtlib2_parser_interface *parser,
-                          smtlib2_term term, smtlib2_vector *annotations);
+    void (*annotate_term)(smtlib2_parser_interface & parser,
+                          smtlib2_term term, const std::vector<std::pair<std::string,std::string>> & annotations);
 
     /**
      * callback for defining let bindings
      * "symbol" is the name of the binding
      * "term" is the definition
      */
-    void (*define_let_binding)(smtlib2_parser_interface *parser,
-                               const char *symbol, smtlib2_term term);
+    void (*define_let_binding)(smtlib2_parser_interface & parser,
+                               const std::string & symbol, smtlib2_term term);
 
     /**
      * callback for creating sorts
@@ -310,8 +314,8 @@ struct smtlib2_parser_interface {
      *         (e.g. when parsing "(_ BitVec 32)"
      *         "sortname" is "BitVec" and "index" is { 32 })
      */
-    smtlib2_sort (*make_sort)(smtlib2_parser_interface *parser,
-                              const char *sortname, smtlib2_vector *index);
+    smtlib2_sort (*make_sort)(smtlib2_parser_interface & parser,
+                              const std::string & sortname, const int_vec & index);
 
     /**
      * callback for instantiating parametric sorts
@@ -320,8 +324,8 @@ struct smtlib2_parser_interface {
      * "tps" is a vector of smtlib2_sort corresponding to the actual parameters
      *       for the parametric sort "name" 
      */
-    smtlib2_sort (*make_parametric_sort)(smtlib2_parser_interface *parser,
-                                         const char *name, smtlib2_vector *tps);
+    smtlib2_sort (*make_parametric_sort)(smtlib2_parser_interface & parser,
+                                         const std::string & name,  const sort_vec & tps);
 
     /**
      * callback for creating function sorts
@@ -329,8 +333,8 @@ struct smtlib2_parser_interface {
      *       the first N-1 elements are the sorts of the function domain,
      *       and the last one is the sort of the codomain
      */
-    smtlib2_sort (*make_function_sort)(smtlib2_parser_interface *parser,
-                                       smtlib2_vector *tps);
+    smtlib2_sort (*make_function_sort)(smtlib2_parser_interface & parser,
+                                       const sort_vec & tps);
 };
 
 

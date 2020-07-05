@@ -27,10 +27,6 @@
 #ifndef SMTLIB2UTILS_H_INCLUDED
 #define SMTLIB2UTILS_H_INCLUDED
 
-#include "smtparser/smtlib2vector.h"
-#include "smtparser/smtlib2hashtable.h"
-#include "smtparser/smtlib2charbuf.h"
-#include "smtparser/smtlib2stream.h"
 #include <stdarg.h>
 
 char *smtlib2_strdup(const char *src);
